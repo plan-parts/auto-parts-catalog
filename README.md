@@ -170,18 +170,18 @@ Caching is enabled by default — repeated page loads within the TTL window use 
 ```php
 // 1. Find the vehicle K-Type
 $vehicles = Catalog::ktype(['brand' => 'VW', 'model' => 'Golf', 'year' => 2018]);
-$ktype = $vehicles['data'][0]['ktype'];
+$ktype = $vehicles['data']['results'][0]['ktype'];
 
 // 2. Get part categories
 $categories = Catalog::categories($ktype);
-$oilFilterCat = collect($categories['data'])->firstWhere('pt_name', 'Oil Filter');
+$oilFilterCat = collect($categories['data']['results'])->firstWhere('name', 'Oil Filter');
 
 // 3. Get all oil filters for this vehicle
 $filters = Catalog::articles($ktype, $oilFilterCat['pt_id']);
 
 // 4. Get analogs for the first result
-$first = $filters['data'][0];
-$analogs = Catalog::analogs($first['art_article_nr'], $first['mfa_brand']);
+$first = $filters['data']['results'][0];
+$analogs = Catalog::analogs($first['article_nr'], $first['brand']);
 ```
 
 ---
