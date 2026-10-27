@@ -1,0 +1,50 @@
+{
+    "name": "plan-parts/auto-parts-catalog",
+    "description": "Laravel package for building an auto parts catalog powered by plan.parts Aftermarket API — vehicle selection, OEM parts lookup, analog search and price comparison.",
+    "keywords": ["laravel", "auto-parts", "catalog", "oem", "iam", "aftermarket", "vehicle", "spare-parts"],
+    "homepage": "https://plan.parts",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "plan-parts",
+            "email": "help@plan.parts",
+            "homepage": "https://plan.parts"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "illuminate/support": "^11.0|^12.0",
+        "illuminate/http": "^11.0|^12.0",
+        "illuminate/cache": "^11.0|^12.0",
+        "illuminate/console": "^11.0|^12.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^9.0",
+        "phpunit/phpunit": "^11.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "PlanParts\\Catalog\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "PlanParts\\Catalog\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "PlanParts\\Catalog\\AutoPartsCatalogServiceProvider"
+            ],
+            "aliases": {
+                "AutoPartsCatalog": "PlanParts\\Catalog\\Facades\\Catalog"
+            }
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
