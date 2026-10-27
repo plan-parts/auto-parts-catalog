@@ -24,8 +24,12 @@ All pages are rendered via Blade views — fully customizable by publishing them
 
 ## Requirements
 
-- PHP **8.2+**
-- Laravel **11** or **12**
+| Laravel | PHP |
+|---------|-----|
+| 11.x    | 8.2+ |
+| 12.x    | 8.2+ |
+| 13.x    | 8.3+ |
+
 - A plan.parts API token — [register here](https://plan.parts/register)
 
 ---

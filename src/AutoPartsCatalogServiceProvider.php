@@ -26,6 +26,9 @@ class AutoPartsCatalogServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'catalog');
+        $this->loadRoutesFrom(__DIR__ . '/routes.php');
+
         if ($this->app->runningInConsole()) {
             $this->publishes([
                 __DIR__ . '/../config/auto-parts-catalog.php' => config_path('auto-parts-catalog.php'),
@@ -35,8 +38,6 @@ class AutoPartsCatalogServiceProvider extends ServiceProvider
                 __DIR__ . '/../resources/views/' => resource_path('views/vendor/auto-parts-catalog'),
             ], 'auto-parts-catalog-views');
         }
-
-        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'catalog');
-        $this->loadRoutesFrom(__DIR__ . '/routes.php');
     }
+
 }
