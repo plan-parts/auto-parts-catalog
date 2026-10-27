@@ -11,27 +11,30 @@
     <h1 class="text-2xl font-bold text-gray-800">Select Model</h1>
 </div>
 
-@if(!empty($models['data']))
+@php $items = $models['data']['results'] ?? []; @endphp
+
+@if(!empty($items))
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-        @foreach($models['data'] as $model)
+        @foreach($items as $model)
             <a href="{{ route('auto-parts.modifications', $model['ms_id']) }}"
-               class="bg-white border border-gray-100 rounded-xl px-4 py-3 hover:border-blue-300 hover:shadow-sm transition group flex items-center justify-between">
-                <div>
-                    <div class="font-semibold text-gray-700 group-hover:text-blue-600">
-                        {{ $model['ms_name'] ?? $model['name'] ?? '—' }}
+               class="bg-white border border-gray-100 rounded-xl overflow-hidden hover:border-blue-300 hover:shadow-sm transition group flex">
+                @if(!empty($model['photo_url'] ?? $model['image_url'] ?? null))
+                    <div class="w-20 flex-shrink-0 bg-gray-50 flex items-center justify-center overflow-hidden">
+                        <img src="{{ $model['photo_url'] ?? $model['image_url'] }}"
+                             alt="{{ $model['name'] }}"
+                             class="w-full h-full object-cover opacity-80 group-hover:opacity-100">
                     </div>
-                    @if(!empty($model['ms_date_of_const_from']))
+                @endif
+                <div class="px-4 py-3 flex flex-col justify-center min-w-0">
+                    <div class="font-semibold text-gray-700 group-hover:text-blue-600 truncate">
+                        {{ $model['name'] }}
+                    </div>
+                    @if(!empty($model['year_from']))
                         <div class="text-xs text-gray-400 mt-0.5">
-                            {{ $model['ms_date_of_const_from'] }}
-                            @if(!empty($model['ms_date_of_const_to']))
-                                – {{ $model['ms_date_of_const_to'] }}
-                            @endif
+                            {{ $model['year_from'] }}{{ !empty($model['year_to']) ? ' – ' . $model['year_to'] : '+' }}
                         </div>
                     @endif
                 </div>
-                <svg class="w-4 h-4 text-gray-300 group-hover:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
             </a>
         @endforeach
     </div>

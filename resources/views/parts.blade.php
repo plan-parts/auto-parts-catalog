@@ -12,34 +12,41 @@
 @section('content')
 <div class="mb-6">
     <h1 class="text-2xl font-bold text-gray-800">Available Parts</h1>
+    @php $total = $parts['data']['count'] ?? 0; @endphp
+    @if($total)
+        <p class="text-gray-400 text-sm mt-1">{{ number_format($total) }} parts found</p>
+    @endif
 </div>
 
-@if(!empty($parts['data']))
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        @foreach($parts['data'] as $part)
-            @php $artId = $part['art_id'] ?? $part['id'] ?? null; @endphp
-            <a href="{{ $artId ? route('auto-parts.article', $artId) : '#' }}"
-               class="bg-white border border-gray-100 rounded-xl overflow-hidden hover:border-blue-300 hover:shadow-sm transition group">
+@php $items = $parts['data']['results'] ?? []; @endphp
 
-                {{-- Image --}}
-                @if(!empty($part['image_url']) || !empty($part['img']))
-                    <div class="h-36 bg-gray-50 flex items-center justify-center overflow-hidden">
-                        <img src="{{ $part['image_url'] ?? $part['img'] }}"
-                             alt="{{ $part['art_article_nr'] ?? '' }}"
-                             class="max-h-full max-w-full object-contain p-3">
-                    </div>
-                @endif
+@if(!empty($items))
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        @foreach($items as $part)
+            <a href="{{ !empty($part['art_id']) ? route('auto-parts.article', $part['art_id']) : '#' }}"
+               class="bg-white border border-gray-100 rounded-xl overflow-hidden hover:border-blue-300 hover:shadow-sm transition group {{ empty($part['art_id']) ? 'pointer-events-none opacity-60' : '' }}">
 
-                <div class="p-4">
-                    <div class="text-xs text-gray-400 uppercase tracking-wide mb-1">
-                        {{ $part['mfa_brand'] ?? $part['brand'] ?? '' }}
+                <div class="h-32 bg-gray-50 flex items-center justify-center overflow-hidden">
+                    @if(!empty($part['img_url']))
+                        <img src="{{ $part['img_url'] }}" alt="{{ $part['article_nr'] }}"
+                             class="max-h-full max-w-full object-contain p-2">
+                    @else
+                        <svg class="w-8 h-8 text-gray-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14"/>
+                        </svg>
+                    @endif
+                </div>
+
+                <div class="p-3">
+                    <div class="text-xs text-gray-400 truncate">{{ $part['brand'] ?? '' }}</div>
+                    <div class="font-mono font-semibold text-gray-800 group-hover:text-blue-600 text-sm truncate">
+                        {{ $part['article_nr'] ?? '—' }}
                     </div>
-                    <div class="font-mono font-semibold text-gray-800 group-hover:text-blue-600">
-                        {{ $part['art_article_nr'] ?? $part['article_number'] ?? '—' }}
-                    </div>
-                    <div class="text-sm text-gray-500 mt-1 truncate">
-                        {{ $part['art_complete_designation'] ?? $part['name'] ?? '' }}
-                    </div>
+                    @if(!empty($part['part_name'] ?? $part['product_name'] ?? null))
+                        <div class="text-xs text-gray-500 mt-1 line-clamp-2 leading-snug">
+                            {{ $part['part_name'] ?? $part['product_name'] }}
+                        </div>
+                    @endif
                 </div>
             </a>
         @endforeach

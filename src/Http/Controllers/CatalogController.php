@@ -11,9 +11,7 @@ class CatalogController extends Controller
 {
     public function __construct(private readonly ApiClient $api) {}
 
-    /**
-     * Step 1: vehicle manufacturers.
-     */
+    /** Step 1: vehicle manufacturers. */
     public function index()
     {
         return $this->render('index', fn () => [
@@ -21,9 +19,7 @@ class CatalogController extends Controller
         ]);
     }
 
-    /**
-     * Step 2: model series for a manufacturer.
-     */
+    /** Step 2: model series for a manufacturer. */
     public function models(int $mfaId)
     {
         return $this->render('models', fn () => [
@@ -32,9 +28,7 @@ class CatalogController extends Controller
         ]);
     }
 
-    /**
-     * Step 3: modifications for a model series.
-     */
+    /** Step 3: modifications for a model series. */
     public function modifications(int $msId)
     {
         return $this->render('modifications', fn () => [
@@ -43,9 +37,7 @@ class CatalogController extends Controller
         ]);
     }
 
-    /**
-     * Step 4: part categories for a vehicle K-Type.
-     */
+    /** Step 4: part categories for a vehicle K-Type. */
     public function categories(int $ktype)
     {
         return $this->render('categories', fn () => [
@@ -54,21 +46,17 @@ class CatalogController extends Controller
         ]);
     }
 
-    /**
-     * Step 5: parts list for a vehicle + category.
-     */
+    /** Step 5: parts list for a vehicle + category. */
     public function parts(int $ktype, int $ptId)
     {
         return $this->render('parts', fn () => [
-            'ktype'  => $ktype,
-            'pt_id'  => $ptId,
-            'parts'  => $this->api->articles($ktype, $ptId),
+            'ktype' => $ktype,
+            'pt_id' => $ptId,
+            'parts' => $this->api->articles($ktype, $ptId),
         ]);
     }
 
-    /**
-     * Step 6: full article detail page.
-     */
+    /** Step 6: full article detail page. */
     public function article(int $artId)
     {
         return $this->render('article', function () use ($artId) {
@@ -77,16 +65,16 @@ class CatalogController extends Controller
             $criteria = $this->api->articleCriteria($artId);
             $crosses  = $this->api->articleCrosses($artId);
 
-            // Try to fetch analogs if article number + brand are available
-            $analogs = [];
-            $articleNumber = $article['data']['article_number'] ?? null;
-            $brand         = $article['data']['brand']['name']  ?? null;
+            // Analogs — requires article_nr + brand from the detail response
+            $analogs       = [];
+            $articleNumber = $article['data']['article_nr'] ?? null;
+            $brand         = $article['data']['brand']      ?? null;
 
             if ($articleNumber && $brand) {
                 try {
                     $analogs = $this->api->analogs($articleNumber, $brand);
                 } catch (ApiException) {
-                    // analogs are optional
+                    // analogs are optional — skip if unavailable
                 }
             }
 
@@ -94,35 +82,24 @@ class CatalogController extends Controller
         });
     }
 
-    /**
-     * Search page.
-     */
+    /** Search page. */
     public function search(Request $request)
     {
-        $query  = trim($request->input('q', ''));
-        $type   = $request->input('type', 'ART');
-        $results = [];
+        $query = trim($request->input('q', ''));
+        $type  = $request->input('type', 'ART');
 
-        if (strlen($query) >= 2) {
-            return $this->render('search', function () use ($query, $type) {
-                return [
-                    'query'   => $query,
-                    'type'    => $type,
-                    'results' => $this->api->search($query, $type),
-                ];
-            });
-        }
+        return $this->render('search', function () use ($query, $type) {
+            $results = [];
 
-        return $this->render('search', fn () => [
-            'query'   => $query,
-            'type'    => $type,
-            'results' => [],
-        ]);
+            if (strlen($query) >= 2) {
+                $results = $this->api->search($query, $type);
+            }
+
+            return compact('query', 'type', 'results');
+        });
     }
 
-    /**
-     * JSON autocomplete for the search field.
-     */
+    /** JSON autocomplete for the search field. */
     public function suggest(Request $request)
     {
         $query = trim($request->input('q', ''));
@@ -138,7 +115,7 @@ class CatalogController extends Controller
         }
     }
 
-    // ─────────────────────────────────────────────────────────────────────
+    // ─────────────────────────────────────────────────────────────────────────
 
     private function render(string $view, callable $data)
     {
